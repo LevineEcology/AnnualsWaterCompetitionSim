@@ -19,7 +19,7 @@ First we load required packages and define several utility functions:
 ## load packages
 library(rootSolve)
 library(ggplot2)
-source("plot_utility.org")
+source("plot_utility.R")
 
 ## calculate soil water content, W, from soil water
 ## potential (see App. Eq. 7)
@@ -297,7 +297,7 @@ Though we can choose any functional form for the relationship between break-even
 
 We start by selecting species which are evenly spaced in break-even time, as this system will go to equilibrium faster than one in which species are drawn randomly (though we also test this case later on). We choose only 15 species as the simulations are computationally cumbersome, though this should help us determine whether coexistence remains common under the relaxed assumptions.
 
-#+BEGIN_SRC R :file tauWplot.svg :session :results output graphics file :exports both
+#+BEGIN_SRC R :file figures/tauWplot.svg :session :results output graphics file :exports both
 
 tau <- seq(40, 400, length.out = 15)
 tau <- tau[order(tau)] ## order by break-even time
@@ -308,7 +308,7 @@ plot(tau, W, pch = 19) ## check it out
 #+END_SRC
 
 #+RESULTS:
-[[file:tauWplot.svg]]
+[[file:figures/tauWplot.svg]]
 
  The tradeoff appears reasonable. Now we back-calculate the \(V_{max}\) values for each of these species that will give us the correct relationship.
 
@@ -389,7 +389,7 @@ write.csv(evensim, "simulationoutputwide_even.csv")
 
 #+END_SRC
 
-#+BEGIN_SRC R :file evensimplot.svg :session :results output graphics file :dir :exports both
+#+BEGIN_SRC R :file figures/evensimplot.svg :session :results output graphics file :dir :exports both
 
 pdata_even <- read.csv("simulationoutputlong_even.csv", row.names = NULL)
 evensim <- read.csv("simulationoutputwide_even.csv", row.names = NULL)
@@ -414,7 +414,7 @@ evensimplot
 #+END_SRC
 
 #+RESULTS:
-[[file:evensimplot.svg]]
+[[file:figures/evensimplot.svg]]
 
 Here, all species have positive equilibrium densities, and are for the most part ordered by phenology, as they were in the model with the step-function approximation. The only exception appears to be the latest species, which has a higher than expected population density.
 
@@ -424,7 +424,7 @@ So far there is no evidence that breaking the step-function approximation seriou
 
 We now examine the within-season dynamics of the system at equilibrium to ensure growth rate varied through time (i.e. the assumption was truly relaxed). To do so we simulate a single season using the "equilibrium" density values from the prior simulation:
 
-#+BEGIN_SRC R :file eqsimplot.svg :session :results output graphics file :dir  :exports both
+#+BEGIN_SRC R :file figures/eqsimplot.svg :session :results output graphics file :dir  :exports both
 
 
 nspp <- length(Vmax)
@@ -469,7 +469,7 @@ out
 #+END_SRC
 
 #+RESULTS:
-[[file:eqsimplot.svg]]
+[[file:figures/eqsimplot.svg]]
 
 Here we see that there is visible variation in growth rate towards the end of each species' growing season -- which results in lower overall growth per season than under a step-function approximation. However, the difference is slight even though we specifically chose parameter values to give us particularly high variability. This provides further support to the appropriateness of the approximation.
 
@@ -482,7 +482,7 @@ Next we simulate a community with species whose \(\tau_i^*\)'s are drawn at rand
 
 *** 3.1 Choosing species
 
-#+BEGIN_SRC R :file wtaurand.svg :session :results output graphics file :exports both
+#+BEGIN_SRC R :file figures/wtaurand.svg :session :results output graphics file :exports both
 
 set.seed(18)
 tau <- runif(15, 40, 400)
@@ -493,7 +493,7 @@ plot(tau, W, pch = 19) ## looks pretty good
 #+END_SRC
 
 #+RESULTS:
-[[file:wtaurand.svg]]
+[[file:figures/wtaurand.svg]]
 
 
 #+BEGIN_SRC R :session :results output :exports both
@@ -539,7 +539,7 @@ write.csv(randsim, "simulationoutputwide_rand.csv")
 
 #+END_SRC
 
-#+BEGIN_SRC R :file randsimplot.svg :session :results output graphics file :dir :exports both
+#+BEGIN_SRC R :file figures/randsimplot.svg :session :results output graphics file :dir :exports both
 
 randpdata <- read.csv("simulationoutputlong_rand.csv")
 randsim <- read.csv("simulationoutputwide_rand.csv")
@@ -559,7 +559,7 @@ ggplot(data = randpdata, aes(x = T, y = log(dens), color = spp, fill = spp2)) +
 #+END_SRC
 
 #+RESULTS:
-[[file:randsimplot.svg]]
+[[file:figures/randsimplot.svg]]
 
 Here, all but one species reach a positive equilibrium population density. The one species that doesn't, species 2, never actually goes extinct in this simulation but decreases linearly in log space, indicating it is approaching 0 density.
 
